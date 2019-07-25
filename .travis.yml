@@ -1,13 +1,9 @@
-dist: trusty
+dist: xenial
 language: elixir
 elixir: 1.9
 otp_release: 22.0
 services:
   - docker
-addons:
-  apt:
-    packages:
-      - mysql-client
 env:
   global:
     - MYSQL_SOCKET_DIR=/var/run/mysqld
