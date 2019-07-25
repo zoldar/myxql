@@ -4,7 +4,7 @@ set -x
 
 : "${DB:=mysql:8.0}"
 : "${MYSQL_TCP_PORT:=3306}"
-: "${MYSQL_SOCKET_DIR:=tmp/mysqld}"
+: "${MYSQL_SOCKET_DIR:=/tmp/mysqld}"
 name="myxql-ci"
 
 mkdir -p $MYSQL_SOCKET_DIR
