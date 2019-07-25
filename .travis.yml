@@ -6,8 +6,6 @@ services:
   - docker
 addons:
   apt:
-    sources:
-      - mysql-5.7-trusty
     packages:
       - mysql-client
 env:
