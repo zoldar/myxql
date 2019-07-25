@@ -22,5 +22,7 @@ matrix:
     - script:
         - mix compile --warnings-as-errors
         - mix format --check-formatted
+before_script:
+  - sudo service mysql stop
 script:
   - scripts/ci.sh
