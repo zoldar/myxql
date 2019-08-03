@@ -531,7 +531,13 @@ defmodule MyXQL.Protocol do
 
   defp decode_resultset(payload, _next_data, {:rows, column_defs, num_rows, acc}, row_decoder) do
     row = row_decoder.(payload, column_defs)
-    {:cont, {:rows, column_defs, num_rows + 1, [row | acc]}}
+
+    case row do
+      :partial ->
+        {:cont, :partial}
+      row ->
+        {:cont, {:rows, column_defs, num_rows + 1, [row | acc]}}
+    end
   end
 
   defp decode_resultset(payload, "", {:trailing_ok_packet, resultset}, _row_decoder) do

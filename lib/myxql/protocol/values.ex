@@ -523,6 +523,9 @@ defmodule MyXQL.Protocol.Values do
   defp decode_string_lenenc(<<0xFE, n::uint8, v::string(n), r::bits>>, null_bitmap, t, acc),
     do: decode_binary_row(r, null_bitmap >>> 1, t, [v | acc])
 
+  defp decode_string_lenenc(<<0xFE, n::uint8, r::binary>>, _null_bitmap, _t, _acc) when byte_size(r) < n,
+    do: :partial
+
   defp decode_json(<<n::uint1, v::string(n), r::bits>>, null_bitmap, t, acc) when n < 251,
     do: decode_binary_row(r, null_bitmap >>> 1, t, [decode_json(v) | acc])
 

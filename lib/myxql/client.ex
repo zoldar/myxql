@@ -175,14 +175,20 @@ defmodule MyXQL.Client do
 
   ## Internals
 
+  defp recv_packets(data, decoder, decoder_state, timeout, state, partial \\ <<>>)
+
   defp recv_packets(
          <<size::uint3, _seq::uint1, payload::string(size), rest::binary>>,
          decoder,
          decoder_state,
          timeout,
-         state
+         state,
+         partial
        ) do
-    case decoder.(payload, rest, decoder_state) do
+    case decoder.(<<partial::binary, payload::binary>>, rest, decoder_state) do
+      {:cont, :partial} ->
+        recv_packets(rest, decoder, decoder_state, timeout, state, <<partial::binary, payload::binary>>)
+
       {:cont, decoder_state} ->
         recv_packets(rest, decoder, decoder_state, timeout, state)
 
@@ -195,10 +201,10 @@ defmodule MyXQL.Client do
   end
 
   # If we didn't match on a full packet, receive more data and try again
-  defp recv_packets(rest, decoder, decoder_state, timeout, state) do
+  defp recv_packets(rest, decoder, decoder_state, timeout, state, partial) do
     case recv_data(state, timeout) do
       {:ok, data} ->
-        recv_packets(<<rest::binary, data::binary>>, decoder, decoder_state, timeout, state)
+        recv_packets(<<rest::binary, data::binary>>, decoder, decoder_state, timeout, state, partial)
 
       {:error, _} = error ->
         error
